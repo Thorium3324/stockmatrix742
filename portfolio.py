@@ -13,18 +13,14 @@ def parse_holdings(input_text):
     return holdings
 
 def calculate_portfolio_value(holdings):
+    tickers = list(holdings.keys())
+    data = yf.download(tickers, period="1d")['Close'].iloc[-1]
     df_portfolio = pd.DataFrame()
     total_value = 0
     for ticker, qty in holdings.items():
-        price = yf.Ticker(ticker).history(period="1d")['Close'][-1]
+        price = data[ticker]
         df_portfolio.loc[ticker, 'Quantity'] = qty
         df_portfolio.loc[ticker, 'Current Price'] = price
         df_portfolio.loc[ticker, 'Value'] = qty * price
         total_value += qty * price
     return df_portfolio, total_value
-
-def calculate_risk_metrics(df_portfolio):
-    returns = df_portfolio.pct_change().dropna()
-    sharpe = returns.mean() / returns.std() * np.sqrt(252)
-    volatility = returns.std() * np.sqrt(252)
-    return sharpe, volatility
