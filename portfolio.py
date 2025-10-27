@@ -1,6 +1,7 @@
 import yfinance as yf
 import pandas as pd
 import numpy as np
+import plotly.express as px
 
 def parse_holdings(input_text):
     holdings = {}
@@ -24,3 +25,9 @@ def calculate_portfolio_value(holdings):
         df_portfolio.loc[ticker, 'Value'] = qty * price
         total_value += qty * price
     return df_portfolio, total_value
+
+def plot_portfolio_pie(df_portfolio):
+    fig = px.pie(df_portfolio, names=df_portfolio.index, values='Value',
+                 color_discrete_sequence=px.colors.sequential.Viridis,
+                 title="Udział akcji w portfelu")
+    return fig
